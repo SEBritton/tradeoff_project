@@ -1,4 +1,4 @@
 # tradeoff_project
 Dissertation chapter on the effect of diet on melanin pigmentation and melanin related trade-offs in Hyles lineata. 
 
-Includes two R Scripts. The first one is for the data sets related to the first part of the project (diet manipulation). The second is more the second part of the project (trade offs).
+Includes two R Scripts: "part1_diets.R" and "part2_tradeoffs.R" These are the two experiments from this chapter. The first R script analyzes the data from the files "Diet_Data", "Extraction_Data", and "Extraction_data." In this experiment I raised larvae on 5 different diets and then analyzed pigmentation with ImageJ as well as melanin extraction (extraction data). For a subset opf individuals I measured consumption rates (feeding data). The second R script analyzes the data from the files "tradeoff_data", "immune data", and "KOH_data." In this experiment I raised larvae in a 2x2 factorial experiment where I varied diet and photoperiod (to induce melanin variation). I measured melanin immune response (immune data), adulut muscle mass (KOH data) and adult pigmentation (data pending).
