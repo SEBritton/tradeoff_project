@@ -44,6 +44,13 @@ lowTyr_data <- tradeoff_data_immune |>
 highTyr_data <- tradeoff_data_immune |>
   filter(Diet_Treatment == "High")
 
+treatment_colors <- c("#D55E00","#0072B2", "#E69F00", "#56B4E9") #assigns colors to each treatment for figures
+treatment_colors2 <- c("#D55E00","#E69F00","#0072B2", "#56B4E9")
+
+treatment_order <- c("LongPhotoHighTyr", "ShortPhotoHighTyr","LongPhotoLowTyr", "ShortPhotoLowTyr") #puts diet in an order that makes sense for figures
+my_labels <- c("Low Melanin\nHigh Tyr", "High Melanin\nHigh Tyr", "Low Melanin\nLow Tyr", "High Melanin\nLow Tyr")
+my_labels2 <- c("Low Melanin\nHigh Tyr", "Low Melanin\nLow Tyr", "High Melanin\nHigh Tyr", "High Melanin\nLow Tyr", "High Melanin\nLow Tyr")
+
 #### Part 1- Immunity #### 
 
 #Visualize  Data
@@ -73,12 +80,12 @@ qqnorm(tradeoff_data_immune$Mass)
 #looks great!
 
 #Models
-Percent_Melanin_mod <- lm(Avg_Percent_Melanin ~ Full_Treatment + Mass, data=tradeoff_data_immune)
+Percent_Melanin_mod <- lm(Avg_Percent_Melanin ~ Full_Treatment, data=tradeoff_data)
 summary(Percent_Melanin_mod)
 emmeans(Percent_Melanin_mod, specs="Full_Treatment") |> pairs(adjust="tukey")
 qqnorm(residuals(Percent_Melanin_mod)) #normality of residuals
 
-Darkness_mod <- lm(Darkness ~ Photo_Treatment + Mass, data=tradeoff_data_immune)
+Darkness_mod <- lm(Darkness ~ Full_Treatment, data=tradeoff_data)
 summary(Darkness_mod)
 emmeans(Darkness_mod, specs="Full_Treatment") %>% pairs(adjust="tukey")
 qqnorm(residuals(Darkness_mod)) #normality of residuals
@@ -87,7 +94,6 @@ Concentration_mod<-lm(Concentration_log ~ Full_Treatment, data=tradeoff_data_imm
 summary(Concentration_mod)
 emmeans(Concentration_mod, specs="Full_Treatment") %>% pairs(adjust="tukey")
 qqnorm(residuals(Concentration_mod)) #normality of residuals
-
 
 Total_mod<-lm(Total_log ~ Full_Treatment, data=tradeoff_data_immune)
 summary(Total_mod)
@@ -100,6 +106,7 @@ summary(Interaction_mod)
 
 mass_mod <- lm(Concentration_log ~ Mass, data=tradeoff_data_immune)
 summary(mass_mod)
+
 Conc_mod2 <- lm(Concentration_log ~ Avg_Percent_Melanin, data=highTyr_data)
 summary(Conc_mod2)
 
@@ -117,20 +124,12 @@ emmeans(Mass_mod, specs="Full_Treatment") %>% pairs(adjust="tukey")
 qqnorm(residuals(Mass_mod)) #normality of residuals
 
 #Figures
-
-treatment_colors <- c("#D55E00","#0072B2", "#E69F00", "#56B4E9") #assigns colors to each treatment for figures
-treatment_colors2 <- c("#D55E00","#E69F00","#0072B2", "#56B4E9")
-
-treatment_order <- c("LongPhotoHighTyr", "ShortPhotoHighTyr","LongPhotoLowTyr", "ShortPhotoLowTyr") #puts diet in an order that makes sense for figures
-my_labels <- c("Low Melanin\nHigh Tyr", "High Melanin\nHigh Tyr", "Low Melanin\nLow Tyr", "High Melanin\nLow Tyr")
-my_labels2 <- c("Low Melanin\nHigh Tyr", "Low Melanin\nLow Tyr", "High Melanin\nHigh Tyr", "Low Melanin\nLow Tyr", "High Melanin\nLow Tyr")
-
-melanin_plot<-ggplot(tradeoff_data_immune, aes(Full_Treatment, y=Avg_Percent_Melanin)) + #x and y to use throughout
+melanin_plot<-ggplot(tradeoff_data, aes(Full_Treatment, y=Avg_Percent_Melanin)) + #x and y to use throughout
   geom_boxplot(aes(color=Full_Treatment), size=1) +  #boxplot with treatments as different colors, resize boxes
   stat_summary(fun.y="mean", color=treatment_colors2, shape=18, size=1) + #add mean value points to graph (as diamonds)
   scale_color_manual(values=treatment_colors2) + #chooses colors for reach diet treatment (from above)
-  annotate(geom="text", x=c(1,2,3,4), y=c(43,44,92,93),label=c("a", "a", "b", "b")) + #adds sig letter labels
-  annotate(geom="text", x=3.5, y=25, label="F=615.3, p<0.001")+
+  annotate(geom="text", x=c(1,2,3,4), y=c(48,44,92,93),label=c("a", "b", "c", "c")) + #adds sig letter labels
+  annotate(geom="text", x=3.5, y=25, label="n=304, p<0.001")+
   theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + #text font and size, remove legend
   xlab("Treatment") + ylab("Percent Area") + #axis labels
   scale_x_discrete(labels= my_labels2)
@@ -144,27 +143,13 @@ ggplot(tradeoff_data_immune, aes(x=Photo_Treatment, y=Avg_Percent_Melanin)) + ge
   theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + 
   xlab("Photoperiod") + ylab("Percent Area")
 
-ggplot(tradeoff_data_immune, aes(x=Photo_Treatment, y=Darkness)) + geom_boxplot(size=0.5, width=0.6) +
+ggplot(tradeoff_data_immune, aes(x=Photo_Treatment, y=Total_Melanin_Metric)) + geom_boxplot(size=0.5, width=0.6) +
   stat_summary(fun.y="mean", shape=18, size=1) +
   annotate(geom="text", x=c(1,2), y=c(19, 20),label=c("a", "b")) + 
   annotate(geom="text", x=1, y=23, label="F(2,158)=70.79, p<0.001") +
   theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + 
   xlab("Photoperiod") + ylab("Darkness")
 
-
-
-ggplot(tradeoff_data_immune, aes(x=Photo_Treatment, Avg_Percent_Melanin)) + #x and y to use throughout
-  geom_boxplot(aes(color=Photo_Treatment), size=1) +  #boxplot with treatments as different colors, resize boxes
-  stat_summary(fun.y="mean", color=Photo_Treatment, shape=18, size=1) + #add mean value points to graph (as diamonds)
-  scale_color_manual(values=treatment_colors) + #chooses colors for reach diet treatment (from above)
-  annotate(geom="text", x=c(1,2,3,4), y=c(43,44,92,93),label=c("a", "a", "b", "b")) + #adds sig letter labels
-  annotate(geom="text", x=3.5, y=25, label="F=615.3, p<0.001")+
-  theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + #text font and size, remove legend
-  xlab("Photoperiod") + ylab("Percent Area") + #axis labels
-  #scale_x_discrete(labels= my_labels)
-  
-  
-  melanin_plot
 
 darkness_plot<-ggplot(tradeoff_data_immune, aes(x=Full_Treatment, y=Darkness)) + #x and y to use throughout
   geom_boxplot(aes(color=Full_Treatment), size=1) +  #boxplot with treatments as different colors, resize boxes
@@ -183,7 +168,7 @@ conc_plot<-ggplot(tradeoff_data_immune, aes(x=factor(Full_Treatment, level = tre
   stat_summary(fun.y="mean", color=treatment_colors, shape=18, size=1) + #add mean value points to graph (as diamonds)
   scale_color_manual(values=treatment_colors2) + #chooses colors for reach diet treatment (from above)
   annotate(geom="text", x=c(1,2,3,4), y=c(2.6,2.3,2.2,1.9),label=c("a", "b", "bc", "c")) + #adds sig letter labels
-  annotate(geom="text", x=3.5, y=2.7, label="F(3,138)=15.58, p<0.001")+
+  annotate(geom="text", x=3.5, y=2.7, label="n=142, p<0.001")+
   theme_classic(base_size = 16)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + #text font and size, remove legend
   xlab("Treatment") + ylab("log Melanin Concentration (ug/g wire)") + 
   scale_x_discrete(labels= my_labels)
@@ -205,7 +190,7 @@ total_plot<-ggplot(tradeoff_data_immune, aes(x=factor(Full_Treatment, level = tr
 
 total_plot
 
-regression_plot<-ggplot(tradeoff_data_immune, aes(x=Avg_Percent_Melanin, y=Concentration_log, color=Full_Treatment)) +
+regression_plot<-ggplot(tradeoff_data_immune, aes(x=Total_Melanin_Metric, y=Concentration_log, color=Full_Treatment)) +
   geom_point()+ geom_smooth(method=lm, se=FALSE) + 
   scale_color_manual(values=treatment_colors) +
   #annotate(geom="text", x=4.5, y=92, label="r"^2~"=0.11 , p=0.007")+
@@ -233,7 +218,7 @@ mass_plot<-ggplot(tradeoff_data_immune, aes(x=Full_Treatment, y=Mass)) + #x and 
   stat_summary(fun.y="mean", color=treatment_colors2, shape=18, size=1) + #add mean value points to graph (as diamonds)
   scale_color_manual(values=treatment_colors2) + #chooses colors for reach diet treatment (from above)
   annotate(geom="text", x=c(1,2,3,4), y=c(6.7,6.6,5.7,5.2),label=c("a", "a", "b", "b")) + #adds sig letter labels
-  annotate(geom="text", x=3.5, y=6.5, label="F=17.58, p<0.001")+
+  annotate(geom="text", x=3.5, y=6.5, label="n=161, p<0.001")+
   theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + #text font and size, remove legend
   xlab("Treatment") + ylab("Mass") + #axis labels
   scale_x_discrete(labels= my_labels2)
@@ -248,8 +233,6 @@ ggarrange(melanin_plot, darkness_plot,
 ggarrange(food_plot, mass_plot, 
           font.label = list(family="Times New Roman"),labels=c("A", "B"), 
           ncol = 2, hjust=-6.5, align="hv")
-
-boxplot(Avg_Percent_Melanin ~ Photo_Treatment, data=tradeoff_data_full)
 
 ggplot(highTyr_data, aes(x=Avg_Percent_Melanin, y=Concentration_log)) +
   geom_point(aes(color=Photo_Treatment)) + geom_smooth(method=lm, color="black", se=FALSE) + 

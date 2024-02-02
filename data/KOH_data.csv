@@ -1,0 +1,77 @@
+﻿Larval_ID,Set,Full_Mass,Before_Thorax,After_Thorax,Muscle_Mass,Muscle_per_full_mass,Notes,Consdier excluding?
+T105,1,0.7097,0.0846,0.0159,0.0687,0.096801465,Drying issue- oven not on for 12 hours; started to disarticulate before drying- full mass might be too low; no DI rinse,Maybe
+T111,1,0.7424,0.0957,0.0184,0.0773,0.104121767,Drying issue- oven not on for 12 hours; started to disarticulate before drying- full mass might be too low; no DI rinse; cutcle missing,Maybe
+T112,1,0.7417,0.0923,0.0183,0.074,0.099770797,Drying issue- oven not on for 12 hours; started to disarticulate before drying- full mass might be too low; no DI rinse,Maybe
+T118,1,0.5084,0.0923,0.0139,0.0784,0.154209284,Drying issue- oven not on for 12 hours; started to disarticulate before drying- full mass might be too low; no DI rinse,Maybe
+T119,1,0.4716,0.0721,0.0142,0.0579,0.122773537,Drying issue- oven not on for 12 hours; started to disarticulate before drying- full mass might be too low; no DI rinse; cutcle missing,Maybe
+T120,1,0.7139,0.0962,0.0198,0.0764,0.10701779,Drying issue- oven not on for 12 hours; started to disarticulate before drying- full mass might be too low; no DI rinse,Maybe
+T121,1,0.4304,0.0857,0.0153,0.0704,0.163568773,Drying issue- oven not on for 12 hours; started to disarticulate before drying- full mass might be too low; no DI rinse,Maybe
+T125,1,0.4506,0.0768,0.0138,0.063,0.139813582,Drying issue- oven not on for 12 hours; started to disarticulate before drying- full mass might be too low; no DI rinse,Maybe
+T129,3,0.8652,0.0977,0.0127,0.085,0.098243181,Cuticle missing,
+T131,3,0.5374,0.0975,0.0122,0.0853,0.158727205,,
+T133,3,0.4536,0.0813,0.0115,0.0698,0.153880071,,
+T134,1,0.6161,0.1033,0.0163,0.087,0.141210842,Drying issue- oven not on for 12 hours; no DI rinse; cutcle missing,
+T137,1,0.7494,0.1118,0.0197,0.0921,0.122898319,Drying issue- oven not on for 12 hours; no DI rinse; cutcle missing,
+T138,3,0.6123,0.0909,0.0131,0.0778,0.127061898,,
+T141,1,0.5019,0.0782,0.0129,0.0653,0.130105599,Drying issue- oven not on for 12 hours; no DI rinse; burned and cuticle missing,
+T143,1,0.6708,0.1351,0.0173,0.1178,0.17561121,Drying issue- oven not on for 12 hours; started to disarticulate before drying- full mass might be too low; no DI rinse; burned,Maybe
+T144,3,0.8723,0.1317,0.0197,0.112,0.128396194,,
+T154,3,0.5081,0.061,0.0085,0.0525,0.103326117,Cuticle missing,
+T169,4,0.6504,0.0754,0.0098,0.0656,0.100861009,Muscle fell off before KOH- included in before mass,Maybe
+T170,4,0.5218,0.0901,0.0124,0.0777,0.148907627,Cuticle missiung,
+T171,4,0.3605,0.0651,0.0068,0.0583,0.161719834,,
+T172,4,0.5612,0.0962,0.0134,0.0828,0.147540984,,
+T173,4,0.5081,0.0778,0.0112,0.0666,0.13107656,,
+T209,1,0.5944,0.0948,0.018,0.0768,0.129205922,Drying issue- oven not on for 12 hours; no DI rinse; cutcle missing,
+T210,1,0.5467,0.0811,0.0156,0.0655,0.119809768,Drying issue- oven not on for 12 hours; no DI rinse; cutcle missing,
+T211,1,0.6142,0.0832,0.0142,0.069,0.112341257,Drying issue- oven not on for 12 hours; no DI rinse; cutcle missing,
+T212,1,0.6867,0.0932,0.0162,0.077,0.112130479,Drying issue- oven not on for 12 hours; started to disarticulate before drying- full mass might be too low; no DI rinse; burned and cuticle missing; falling apart in KOH,Yes
+T213,1,0.8156,0.1149,0.0178,0.0971,0.119053458,Drying issue- oven not on for 12 hours; started to disarticulate before drying- full mass might be too low; no DI rinse; cutcle missing,Maybe
+T216,2,0.554,0.0935,0.0144,0.0791,0.142779783,Only one DI rinse before removing,
+T220,2,0.6641,0.112,0.018,0.094,0.141544948,Only one DI rinse before removing; burned,
+T223,2,0.7764,0.1173,0.0195,0.0978,0.125965997,Only one DI rinse before removing; pieces falling off in KOH,Yes
+T225,2,0.4473,0.0839,0.013,0.0709,0.158506595,Only one DI rinse before removing; burned; pieces falling off in KOH,Yes
+T229,3,0.4811,0.0815,0.0104,0.0711,0.147786323,Burned;l cuticle missing,
+T230,1,0.4542,0.0708,0.0137,0.0571,0.125715544,"Drying issue- oven not on for 12 hours; no DI rinse; burned and cuticle missing, falling apart in KOH",Yes
+T231,3,0.5919,0.0831,0.0112,0.0719,0.121473222,,
+T237,1,0.497,0.0992,0.0161,0.0831,0.167203219,"Drying issue- oven not on for 12 hours; no DI rinse; burned, falling apart in KOH",Yes
+T238,3,0.493,0.0928,0.0116,0.0812,0.164705882,,
+T245,3,0.6911,0.0758,0.0093,0.0665,0.096223412,Missing part of thorax?,Yes
+T267,4,0.4568,0.0822,0.0123,0.0699,0.153021016,,
+T268,4,0.6449,0.1028,0.0162,0.0866,0.134284385,"Burned, pieces falling off in KOH",Yes
+T270,4,0.511,0.082,0.0127,0.0693,0.135616438,Burned,
+T271,4,0.6145,0.092,0.0127,0.0793,0.129048007,Muscle fell off before KOH- included in before mass,Maybe
+T273,4,0.5482,0.0953,0.0141,0.0812,0.148121124,,
+T307,2,0.5648,0.0756,0.0101,0.0655,0.115970255,Only one DI rinse before removing,
+T313,3,0.5571,0.0808,0.0114,0.0694,0.124573685,Cuticle missing,
+T318,3,0.5415,0.0811,0.0113,0.0698,0.1289012,Cuticle missing,
+T330,2,0.3427,0.0617,0.0093,0.0524,0.152903414,Only one DI rinse before removing,
+T332,3,0.4341,0.0678,0.0097,0.0581,0.133840129,Cuticle missing,
+T336,4,0.2523,0.0457,0.0061,0.0396,0.156956005,Cuticle missing,
+T337,2,0.445,0.0564,0.0076,0.0488,0.109662921,Only one DI rinse before removing; cutcile missing,
+T339,2,0.342,0.0587,0.0084,0.0503,0.147076023,Only one DI rinse before removing,
+T348,2,0.571,0.08,0.0126,0.0674,0.118038529,Only one DI rinse before removing,
+T349,3,0.4747,0.0779,0.0124,0.0655,0.137981883,,
+T372,2,0.4699,0.0777,0.0115,0.0662,0.140881039,Only one DI rinse before removing,
+T378,4,0.4377,0.0792,0.0115,0.0677,0.15467215,"Started to disarticulate before weighning, full mass may be too low",Maybe
+T404,4,0.2738,0.0542,0.0074,0.0468,0.170927684,,
+T412,2,0.3195,0.0538,0.0071,0.0467,0.146165884,Only one DI rinse before removing; cuticle missing,
+T413,3,0.4731,0.0808,0.0137,0.0671,0.14183048,Burned; Pieces falling off in KOH,Yes
+T422,3,0.322,0.0567,0.0079,0.0488,0.151552795,Cuticle missing,
+T423,2,0.2736,0.0549,0.0074,0.0475,0.173611111,Only one DI rinse before removing,
+T426,2,0.3981,0.0759,0.0087,0.0672,0.168801809,Only one DI rinse before removing,
+T427,4,0.5301,0.0897,0.0141,0.0756,0.142614601,,
+T428,3,0.5112,0.0759,0.0101,0.0658,0.128716745,Burned,
+T429,2,0.6095,0.0799,0.0099,0.07,0.114848236,"Only one DI rinse before removing; burned, pieces falling off in KOPH",Yes
+T430,3,0.3726,0.0699,0.0101,0.0598,0.160493827,Cuticle missing,
+T431,2,0.3641,0.0669,0.0091,0.0578,0.158747597,Only one DI rinse before removing; cuticle missing,
+T433,4,0.3073,0.0569,0.0074,0.0495,0.161080377,Cuticle missing,
+T434,3,0.268,0.0552,0.0086,0.0466,0.173880597,,
+T435,2,0.4167,0.0866,0.0122,0.0744,0.178545716,Only one DI rinse before removing; pieces falling off in KOH,Yes
+T448,2,0.3263,0.0463,0.0054,0.0409,0.125344775,Only one DI rinse before removing; missing part of thorax?,Yes
+T450,2,0.4691,0.0869,0.0138,0.0731,0.155830313,Only one DI rinse before removing; burned; pieces falling off in KOH,
+T463,4,0.5152,0.066,0.0084,0.0576,0.111801242,Part of thorax missing?,Yes
+T465,2,0.3671,0.0677,0.009,0.0587,0.159901934,Only one DI rinse before removing; cuticle missing,
+T468,2,0.4265,0.0749,0.01,0.0649,0.152168816,Only one DI rinse before removing; cuticle missing,
+T472,3,0.4435,0.0828,0.0139,0.0689,0.15535513,Burned; Pieces falling off in KOH,Yes
+T476,3,0.2459,0.0584,0.0087,0.0497,0.202114681,Cuticle missing,
