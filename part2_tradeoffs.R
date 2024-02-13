@@ -29,17 +29,16 @@ immune_data<-immune_data |>
 
 KOH_data <- read.csv("data/KOH_data.csv")
 KOH_data <- KOH_data |>
-  mutate(muscle_percentage=muscle_percent*100)
- 
- filter(exclude != "Yes")
+  mutate(muscle_percentage=muscle_percent*100) |>
+  filter(exclude != "Yes")
 
 
 #Merge data sets
 tradeoff_data_immune <- merge(tradeoff_data, immune_data, by="Larval_ID")
-head(tradeoff_data_immune)
+#head(tradeoff_data_immune)
 
 tradeoff_data_muscle <- merge(tradeoff_data, KOH_data, by="Larval_ID")
-head(tradeoff_data_muscle)
+#head(tradeoff_data_muscle)
 
 #Split into two data sets for each diet treatment, needed below
 lowTyr_data_immune <- tradeoff_data_immune |>
@@ -61,7 +60,7 @@ treatment_colors2 <- c("#D55E00","#E69F00","#0072B2", "#56B4E9")
 
 treatment_order <- c("LongPhotoHighTyr", "ShortPhotoHighTyr","LongPhotoLowTyr", "ShortPhotoLowTyr") #puts diet in an order that makes sense for figures
 my_labels <- c("Low Melanin\nHigh Tyr", "High Melanin\nHigh Tyr", "Low Melanin\nLow Tyr", "High Melanin\nLow Tyr")
-my_labels2 <- c("Low Melanin\nHigh Tyr", "Low Melanin\nLow Tyr", "High Melanin\nHigh Tyr", "High Melanin\nLow Tyr", "High Melanin\nLow Tyr")
+#my_labels2 <- c("Low Melanin\nHigh Tyr", "Low Melanin\nLow Tyr", "High Melanin\nHigh Tyr", "High Melanin\nLow Tyr", "High Melanin\nLow Tyr")
 
 #### Part 1- Immunity #### 
 
@@ -142,38 +141,24 @@ emmeans(Mass_mod, specs="Full_Treatment") %>% pairs(adjust="tukey")
 qqnorm(residuals(Mass_mod)) #normality of residuals
 
 #Figures
-melanin_plot<-ggplot(tradeoff_data, aes(Full_Treatment, y=Avg_Percent_Melanin)) + #x and y to use throughout
+melanin_plot<-ggplot(tradeoff_data, aes(x=factor(Full_Treatment, level = treatment_order), y=Avg_Percent_Melanin)) + #x and y to use throughout
   geom_boxplot(aes(color=Full_Treatment), size=1) +  #boxplot with treatments as different colors, resize boxes
-  stat_summary(fun.y="mean", color=treatment_colors2, shape=18, size=1) + #add mean value points to graph (as diamonds)
+  stat_summary(fun.y="mean", color=treatment_colors, shape=18, size=1) + #add mean value points to graph (as diamonds)
   scale_color_manual(values=treatment_colors2) + #chooses colors for reach diet treatment (from above)
-  annotate(geom="text", x=c(1,2,3,4), y=c(48,44,92,93),label=c("a", "b", "c", "c")) + #adds sig letter labels
-  annotate(geom="text", x=3.5, y=25, label="n=304, p<0.001")+
+  annotate(geom="text", x=c(1,2,3,4), y=c(49,92,44,93),label=c("a", "b", "c", "b")) + #adds sig letter labels
+  annotate(geom="text", x=4.1, y=20, label="n=304, p<0.001")+
   theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + #text font and size, remove legend
-  xlab("Treatment") + ylab("Percent Area") + #axis labels
-  scale_x_discrete(labels= my_labels2)
+  xlab("Treatment") + ylab("Proportion melanin (%)") + #axis labels
+  scale_x_discrete(labels= my_labels)
 
 melanin_plot
 
-ggplot(tradeoff_data_immune, aes(x=Photo_Treatment, y=Avg_Percent_Melanin)) + geom_boxplot(size=0.5, width=0.6) +
-  stat_summary(fun.y="mean", shape=18, size=1) +
-  annotate(geom="text", x=c(1,2), y=c(44, 93),label=c("a", "b")) + 
-  annotate(geom="text", x=1, y=80, label="F(2,158)=1,220, p<0.001") +
-  theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + 
-  xlab("Photoperiod") + ylab("Percent Area")
-
-ggplot(tradeoff_data_immune, aes(x=Photo_Treatment, y=Total_Melanin_Metric)) + geom_boxplot(size=0.5, width=0.6) +
-  stat_summary(fun.y="mean", shape=18, size=1) +
-  annotate(geom="text", x=c(1,2), y=c(19, 20),label=c("a", "b")) + 
-  annotate(geom="text", x=1, y=23, label="F(2,158)=70.79, p<0.001") +
-  theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + 
-  xlab("Photoperiod") + ylab("Darkness")
-
-darkness_plot<-ggplot(tradeoff_data_immune, aes(x=Full_Treatment, y=Darkness)) + #x and y to use throughout
+darkness_plot<-ggplot(tradeoff_data_immune, aes(x=factor(Full_Treatment, level = treatment_order), y=Darkness)) + #x and y to use throughout
   geom_boxplot(aes(color=Full_Treatment), size=1) +  #boxplot with treatments as different colors, resize boxes
   stat_summary(fun.y="mean", color=treatment_colors, shape=18, size=1) + #add mean value points to graph (as diamonds)
-  scale_color_manual(values=treatment_colors) + #chooses colors for reach diet treatment (from above)
-  annotate(geom="text", x=c(1,2,3,4), y=c(19,19,20,20),label=c("a", "a", "b", "b")) + #adds sig letter labels
-  annotate(geom="text", x=3.5, y=23, label="F=35.39.3, p<0.001")+
+  scale_color_manual(values=treatment_colors2) + #chooses colors for reach diet treatment (from above)
+  annotate(geom="text", x=c(1,2,3,4), y=c(18.5,20,18.5,20),label=c("a", "a", "b", "b")) + #adds sig letter labels
+  annotate(geom="text", x=3.5, y=23, label="n=304, p<0.001")+
   theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + #text font and size, remove legend
   xlab("Treatment") + ylab("Darkness") + #axis labels
   scale_x_discrete(labels= my_labels)
@@ -225,15 +210,15 @@ regression_plot<-ggplot(tradeoff_data_immune, aes(x=Total_Melanin_Metric, y=Conc
 
 regression_plot
 
-mass_plot<-ggplot(tradeoff_data_immune, aes(x=Full_Treatment, y=Mass)) + #x and y to use throughout
+mass_plot<-ggplot(tradeoff_data_immune, aes(x=factor(Full_Treatment, level = treatment_order), y=Mass)) + #x and y to use throughout
   geom_boxplot(aes(color=Full_Treatment), size=1) +  #boxplot with treatments as different colors, resize boxes
-  stat_summary(fun.y="mean", color=treatment_colors2, shape=18, size=1) + #add mean value points to graph (as diamonds)
+  stat_summary(fun.y="mean", color=treatment_colors, shape=18, size=1) + #add mean value points to graph (as diamonds)
   scale_color_manual(values=treatment_colors2) + #chooses colors for reach diet treatment (from above)
-  annotate(geom="text", x=c(1,2,3,4), y=c(6.7,6.6,5.7,5.2),label=c("a", "a", "b", "b")) + #adds sig letter labels
-  annotate(geom="text", x=3.5, y=6.5, label="n=161, p<0.001")+
+  annotate(geom="text", x=c(1,2,3,4), y=c(6.7,5.7,6.6,5.2),label=c("a", "b", "a", "b")) + #adds sig letter labels
+  annotate(geom="text", x=3.8, y=6.5, label="n=161, p<0.001")+
   theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + #text font and size, remove legend
-  xlab("Treatment") + ylab("Mass") + #axis labels
-  scale_x_discrete(labels= my_labels2)
+  xlab("Treatment") + ylab("Larval mass (g)") + #axis labels
+  scale_x_discrete(labels= my_labels)
 
 mass_plot
 
@@ -297,7 +282,7 @@ summary(Percent_Melanin_mod2)
 emmeans(Percent_Melanin_mod2, specs="Full_Treatment") |> pairs(adjust="tukey")
 qqnorm(residuals(Percent_Melanin_mod)) #normality of residuals
 
-Muscle_mod <- lm(muscle_percentage ~ Full_Treatment, data=tradeoff_data_muscle)
+Muscle_mod <- lm(muscle_percent ~ Full_Treatment, data=tradeoff_data_muscle)
 summary(Muscle_mod)
 emmeans(Muscle_mod, specs="Full_Treatment") |> pairs(adjust="tukey")
 qqnorm(residuals(Muscle_mod)) #normality of residuals
@@ -333,10 +318,10 @@ muscle_plot<-ggplot(tradeoff_data_muscle, aes(x=factor(Full_Treatment, level = t
   geom_boxplot(aes(color=Full_Treatment), size=0.7, width=0.8) +  #boxplot with treatments as different colors, resize boxes
   stat_summary(fun.y="mean", color=treatment_colors, shape=18, size=1) + #add mean value points to graph (as diamonds)
   scale_color_manual(values=treatment_colors2) + #chooses colors for reach diet treatment (from above)
-  annotate(geom="text", x=c(1,2,3,4), y=c(17,21,18,17),label=c("a", "b", "a", "a")) + #adds sig letter labels
-  annotate(geom="text", x=3.5, y=20, label="n=106, p<0.001")+
+  annotate(geom="text", x=c(1,2,3,4), y=c(17.4,21,18,16.3),label=c("a", "b", "a", "a")) + #adds sig letter labels
+  annotate(geom="text", x=3.5, y=20, label="n=103, p<0.001")+
   theme_classic(base_size = 16)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + #text font and size, remove legend
-  xlab("Treatment") + ylab("Percent muscle per total mass") + 
+  xlab("Treatment") + ylab("Proportion muscle (%)") + 
   scale_x_discrete(labels= my_labels)
 
 muscle_plot
@@ -383,10 +368,47 @@ ggplot(lowTyr_data_muscle, aes(x=Avg_Percent_Melanin, y=muscle_percentage)) +
   theme_classic(base_size = 18) + theme(legend.position="none", text=element_text(family="Times New Roman")) +
   xlab("Percent Melanin") + ylab("Muscle per total mass") 
 
-ggplot(tradeoff_data_muscle, aes(x=full_mass, y=muscle_percentage)) +
-  geom_point() + geom_smooth(method=lm, color="black", se=TRUE) + 
-  ylim(0,20) + 
-  theme_classic(base_size = 18) + theme(legend.position="none", text=element_text(family="Times New Roman")) +
+ggplot(tradeoff_data_muscle, aes(x=full_mass, y=muscle_mass)) +
+  geom_point(aes(color=Full_Treatment)) + geom_smooth(method=lm, se=TRUE) + 
+  scale_color_manual(values=treatment_colors2) +
+  theme_classic(base_size = 18) + theme(text=element_text(family="Times New Roman")) +
   xlab("Mass") + ylab("Muscle per total mass")
 
 
+size_graph_combo<-ggplot() +
+  geom_boxplot(tradeoff_data_immune, mapping=aes(x=factor(Full_Treatment, level = treatment_order), y=Mass)) + 
+  stat_summary(tradeoff_data_immune,fun.y="mean", mapping=aes(x=factor(Full_Treatment, level = treatment_order), y=Mass), shape=18, size=1) +
+  geom_boxplot(tradeoff_data_muscle, mapping=aes(x=factor(Full_Treatment, level = treatment_order), y=full_mass)) + 
+  stat_summary(tradeoff_data_muscle, fun.y="mean", mapping=aes(x=factor(Full_Treatment, level = treatment_order), y=full_mass), shape=18, size=1) +
+  scale_color_manual(values=treatment_colors2) + 
+  theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + 
+  xlab("Diet Treatment") + ylab("Mass (g)")
+
+size_graph_combo
+
+Muscle_mod2 <- lm(muscle_percentage ~ Avg_Percent_Melanin + full_mass, data=highTyr_data_muscle)
+summary(Muscle_mod2)
+
+residual_mod <- lm(log(muscle_mass)~log(full_mass), data=tradeoff_data_muscle) 
+resid <- residual_mod$residuals
+
+tradeoff_data_muscle_resid <- tradeoff_data_muscle |>
+  mutate(muscle_resids=residual_mod$residuals)
+
+
+ggplot(tradeoff_data_muscle_resid, aes(x=factor(Full_Treatment, level = treatment_order), y=muscle_resids)) + #x and y to use throughout
+  geom_boxplot(aes(color=Full_Treatment), size=1) +  #boxplot with treatments as different colors, resize boxes
+  stat_summary(fun.y="mean", color=treatment_colors, shape=18, size=1) + #add mean value points to graph (as diamonds)
+  scale_color_manual(values=treatment_colors2) + #chooses colors for reach diet treatment (from above)
+  annotate(geom="text", x=c(1,2,3,4), y=c(0.22,0.22,0.4,0.2),label=c("a", "a", "ab", "b")) + #adds sig letter labels
+  annotate(geom="text", x=3.8, y=0.3, label="n=161, p=0.081")+
+  theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + #text font and size, remove legend
+  xlab("Treatment") + ylab("Model residuals") + #axis labels
+  scale_x_discrete(labels= my_labels)
+
+residual_mod_2 <- lm(muscle_resids ~ Photo_Treatment+Diet_Treatment+Photo_Treatment*Diet_Treatment, data=tradeoff_data_muscle_resid)
+summary(residual_mod_2)
+emmeans(residual_mod_2, specs="Full_Treatment") |> pairs(adjust="tukey")
+qqnorm(residuals(residual_mod_2)) #normality of residuals
+
+Photo_Treatment+Diet_Treatment+Photo_Treatment*Diet_Treatment
