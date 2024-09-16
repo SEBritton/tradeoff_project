@@ -1,4 +1,4 @@
-﻿ID,Diet_Treatment,Full_Mass,Extraction_Run,Subsample_Mass,Concentration,Total_Extracted
+﻿ID,diet_treatment,full_mass,extraction_run,subsample_mass,concentration,total_extracted
 101,LOW,15.3,2,2.13,76.7342008,163.3671135
 102,LOW,21.7,1,3.40,78.4908964,266.4765933
 103,LOW,29.1,1,3.78,55.5851656,209.8895853
