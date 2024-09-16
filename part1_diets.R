@@ -1,4 +1,4 @@
-# The effect of diet on melanin pigmentation in Hyles lineata
+# Experiment 1: Diet as a constraint on melanin pigmentation in Hyles lineata
 #Authors: Sarah Britton and Goggy Davidowitz
 
 # Libraries
@@ -10,7 +10,7 @@ library(ggpubr) #for combining ggplots
 library(emmeans) #for post hoc tests
 library(lmerTest) # for extracting p vals from mixed models
 library(lme4) # mixed models
-library(cowplot)
+library(cowplot) #for combining plots
 library(dplyr) #for piping and grouping
 
 
@@ -24,8 +24,8 @@ extraction_data_full$concentration_photo_mass<-extraction_data_full$total_extrac
 extraction_data_full$concentration_blocking_mass<-extraction_data_full$total_extracted/extraction_data_full$blocking_mass
 
 #Check distribution of  response variables
-hist(diet_data$avg_percent_noB)
-hist(diet_data$darkness_noB)
+hist(diet_data$avg_percent)
+hist(diet_data$darkness)
 hist(extraction_data_full$concentration_photo_mass)
 
 
@@ -60,11 +60,11 @@ diet_data %>%
             fifth_median = median(X5th_food_change, na.rm = TRUE)) %>%
   as.data.frame
 
-#Melanin Proportion
-proportion_mod <- lm(avg_percent ~ diet_treatment, data=diet_data)
-summary(proportion_mod)
-emmeans(proportion_mod, specs="diet_treatment") |> pairs(adjust="tukey")
-qqnorm(residuals(proportion_mod)) #normality of residuals
+#Percent melanin
+percent_mod <- lm(avg_percent ~ diet_treatment, data=diet_data)
+summary(percent_mod)
+emmeans(percent_mod, specs="diet_treatment") |> pairs(adjust="tukey")
+qqnorm(residuals(percent_mod)) #normality of residuals
 plot(fitted(proportion_mod), residuals(proportion_mod)) #homoskedasticity 
 
 #Darkness
@@ -87,7 +87,7 @@ summary(size_regress)
 size_regress2<-lm(darkness ~ photo_mass, data = diet_data)
 summary(size_regress2)
 
-#Feeding
+#Feeding data
 Feeding_Test_4<-lm(X4th_food_change ~ diet_treatment, data = diet_data)
 summary(Feeding_Test_4)
 emmeans(Feeding_Test_4, specs="diet_treatment") |> pairs(adjust="tukey")
@@ -100,7 +100,7 @@ emmeans(Feeding_Test_5, specs="diet_treatment") |> pairs(adjust="tukey")
 qqnorm(residuals(Feeding_Test_5))
 plot(fitted(Feeding_Test_5),residuals(Feeding_Test_5)) #homoskedasticity
 
-#Extraction
+#Extraction data
 t.test(extraction_data_full$concentration_photo_mass~extraction_data_full$diet_treatment)
 
 extraction_test <- lm(concentration_photo_mass ~ avg_percent*darkness, data=extraction_data_full)
@@ -108,14 +108,14 @@ summary(extraction_test)
 
 ####Figures for Paper####
 #Figure 2
-area_graph_paper<-ggplot(diet_data, aes(x=factor(diet_treatment, level = diet_order),  avg_percent)) + #x and y to use throughout, reorders x var
+area_graph_paper<-ggplot(diet_data, aes(x=factor(diet_treatment, level = diet_order),  avg_percent)) + 
   geom_boxplot(outlier.shape=NA) +
   geom_jitter(width=0.17, alpha=0.5)+
-  stat_summary(fun ="mean", shape=18, size=1.2) + #add mean value points to graph (as diamonds)
-  annotate(geom="text", x=c(1,2,3,4,5), y=c(87,89,93,91,90),label=c("a", "ab", "b", "b", "b")) + #adds sig letter labels
-  theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + #text font and size, remove legend
+  stat_summary(fun ="mean", shape=18, size=1.2) + 
+  annotate(geom="text", x=c(1,2,3,4,5), y=c(87,89,93,91,90),label=c("a", "ab", "b", "b", "b")) + 
+  theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + 
   scale_x_discrete(labels = diet_labels) +
-  xlab("Diet Treatment") + ylab("Percent melanic area") #axis labels
+  xlab("Diet Treatment") + ylab("Percent melanic area") 
 area_graph_paper
 
 darkness_graph_paper<-ggplot(diet_data, aes(x=factor(diet_treatment, level = diet_order),  darkness)) + 
@@ -240,7 +240,6 @@ size_graph_slides<-ggplot(diet_data, aes(x=factor(diet_treatment, level = diet_o
   stat_summary(fun.y="mean", aes(color=diet_treatment), shape=18, size=1) +
   scale_color_manual(values=diet_colors) +  
   annotate(geom="text", x=c(1,2,3,4,5), y=c(4.6,3.3,5.7,3.5,4),label=c("a", "c", "a", "bc", "ab")) + 
-  #annotate(geom="text", x=4.5, y=5.3, label="n=258, p<0.001")+
   scale_x_discrete(labels = diet_labels) +
   theme_classic(base_size = 16) + theme(legend.position="none",text=element_text(family="Times New Roman")) +
   xlab("Diet Treatment") + ylab("Mass (g)")
@@ -258,8 +257,6 @@ feeding_graph_slides<-ggplot(diet_data, aes(x=factor(diet_treatment, level = die
   scale_color_manual(values=diet_colors) + 
   annotate(geom="text", x=c(1,2,3,4,5), y=c(1750,1380,2050,1220,1190),label=c("a", "b", "a", "b", "b")) +
   annotate(geom="text", x=c(1,2,3,4,5), y=c(500, 430, 650, 400, 490),label=c("cd", "e", "c", "e", "de")) +
-  #annotate(geom="text", x=4.5, y=2000,label="5th: n=108, p<0.001") +
-  #annotate(geom="text", x=4.5, y=1800,label="4th: n=108, p<0.001") +
   scale_x_discrete(labels = diet_labels) +
   theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + 
   xlab("Diet Treatment") + ylab("Change in food (mg)")
@@ -281,12 +278,4 @@ ggplot(extraction_data_full, aes(avg_percent, concentration_photo_mass))+ geom_p
   annotate(geom="text", x=60, y=150, label="r"^2~"=0.04 , p=0.03")+
   theme_classic(base_size = 16) + theme(legend.position="none", text=element_text(family="Times New Roman")) +
   ylab("Melanin Concentration (ug melanin/g body mass)") + xlab("Percent Area Melanin")
-
-ggplot(extraction_data_full, aes(concentration_photo_mass, melanin_metric_noB))+ geom_point(size=1)+ 
-  geom_smooth(method=lm, se=TRUE, fill="gray80") + 
-  #annotate(geom="text", x=20, y=150, label="r"^2~"=0.04 , p=0.03")+
-  theme_classic(base_size = 16) + theme(legend.position="none", text=element_text(family="Times New Roman")) +
-  ylab("Melanin") + xlab("Concentration")
-
-
 
