@@ -186,7 +186,7 @@ food_plot<-ggplot(tradeoff_data_immune, aes(x=factor(Full_Treatment, level = tre
   stat_summary(fun.y="mean", shape=18, size=1) + #add mean value points to graph (as diamonds)
   annotate(geom="text", x=c(1,2,3,4), y=c(7, 6.3,5.9,5.4),label=c("a", "ab", "b", "b")) + #adds sig letter labels
   theme_classic(base_size = 16)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + #text font and size, remove legend
-  xlab("Treatment") + ylab("Food consumption\n(g/ 24hr)") + ylim(0,7.5)+
+  xlab("Treatment") + ylab("Change in food (g)") + ylim(0,7.5)+
   scale_x_discrete(labels= my_labels)
 food_plot
 
