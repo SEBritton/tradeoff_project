@@ -1,5 +1,6 @@
-#Experiment 2: melanin pigmentation trade-offs in Hyles lineata
-#Authors: Sarah Britton and Goggy Davidowitz
+#Dietary constraints and costs of melanin pigmentation plasticity
+#Experiment 2: Trade-offs
+#Sarah Britton and Goggy Davidowitz
 
 # Libraries
 library(cowplot)
@@ -71,7 +72,6 @@ my_labels <- c("Long Photo\nLow Tyr", "Long Photo\nHigh Tyr", "Short Photo\nLow 
 treatment_order2 <- c("LongPhotoHighTyr", "ShortPhotoHighTyr", "LongPhotoLowTyr",  "ShortPhotoLowTyr") 
 my_labels2 <- c("Long Photo\nHigh Tyr", "Short Photo\nHigh Tyr", "Long Photo\nLow Tyr", "Short Photo\nLow Tyr")
 
-family_labels<-c("1", "2", "3", "4", "5", "6")
 
 ####Treatment Effects####
 
@@ -83,15 +83,14 @@ ggplot(aes(x=full_mass), data=tradeoff_data_adult) + geom_histogram()
 ggplot(aes(x=Devo_5th), data=tradeoff_data_adult) + geom_histogram()
 ggplot(aes(x=Devo_Total), data=tradeoff_data_adult) + geom_histogram(binwidth = 1)
 
+
 #Statistics
 tradeoff_data %>%
   group_by(Photo_Treatment) %>%
-  summarize(area_mean = mean(Avg_Percent, na.rm = TRUE),
-            area_sd = sd(Avg_Percent, na.rm = TRUE),
-            area_median = median(Avg_Percent, na.rm = TRUE),
+  summarize(area_mean = mean(Percent_G, na.rm = TRUE),
+            area_sd = sd(Percent_G, na.rm = TRUE),
             darkness_mean = mean(Darkness, na.rm = TRUE),
-            darkness_sd = sd(Darkness, na.rm = TRUE),
-            darkness_median = median(Darkness, na.rm = TRUE)) %>%
+            darkness_sd = sd(Darkness, na.rm = TRUE))
   as.data.frame
 
 tradeoff_data_adult %>%
@@ -106,6 +105,7 @@ tradeoff_data_immune %>%
             mass_sd = sd(Mass, na.rm = TRUE)) %>%
   as.data.frame
 
+
 #Pigmentation
 Percent_Melanin_mod <- lmer(Percent_G ~ Photo_Treatment + Diet_Treatment + Photo_Treatment:Diet_Treatment + (1|Family), data=tradeoff_data)
 summary(Percent_Melanin_mod)
@@ -118,6 +118,7 @@ summary(Darkness_mod)
 emmeans(Darkness_mod, specs="Full_Treatment") %>% pairs(adjust="tukey")
 qqnorm(residuals(Darkness_mod)) 
 plot(Darkness_mod)
+
 
 #Size
 Food_mod<-lmer(Food_Change ~ Photo_Treatment + Diet_Treatment + Photo_Treatment*Diet_Treatment + (1|Family), data=tradeoff_data_immune)
@@ -158,8 +159,9 @@ summary(melanin_vs_size)
 qqnorm(residuals(melanin_vs_size)) 
 plot(melanin_vs_size)
 
+
 #Figures
-melanin_plot<-ggplot(tradeoff_data, aes(x=factor(Full_Treatment, level = treatment_order), y=Avg_Percent)) + #x and y to use throughout
+melanin_plot<-ggplot(tradeoff_data, aes(x=factor(Full_Treatment, level = treatment_order), y=Percent_G)) + #x and y to use throughout
   geom_boxplot( size=0.7, outlier.shape=NA) + #boxplot with colors for each treatment
   geom_jitter(width=0.25, alpha=0.5) + #show raw data points
   stat_summary(fun.y="mean", shape=18, size=1.2) + #add mean value points to graph (as diamonds)
@@ -172,7 +174,7 @@ melanin_plot
 
 darkness_plot<-ggplot(tradeoff_data_immune, aes(x=factor(Full_Treatment, level = treatment_order), y=Darkness)) +
   geom_boxplot(size=0.7, outlier.shape=NA) + 
-  geom_jitter(width=0.25, alpha=0.5) + #show raw data points
+  geom_jitter(width=0.25, alpha=0.5) + 
   stat_summary(fun.y="mean", shape=18, size=1.2) + 
   annotate(geom="text", x=c(1,2,3,4), y=c(18.5,20,18.5,20),label=c("a", "a", "b", "b")) + 
   theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + 
@@ -227,10 +229,12 @@ devo_plot
 
 
 #### Part 1: Immunity #### 
+
 #Visualize data
 ggplot(aes(x=Concentration_log), data=tradeoff_data_immune) + geom_histogram()
 ggplot(aes(x=Total_log), data=tradeoff_data_immune) + geom_histogram()
 ggplot(aes(x=Food_Change), data=tradeoff_data_immune) + geom_histogram()
+
 
 #Statistics
 tradeoff_data_immune %>%
@@ -243,30 +247,41 @@ tradeoff_data_immune %>%
             total_median = median(Total_log, na.rm = TRUE)) %>%
   as.data.frame
             
-Concentration_mod<-lmer(Concentration_log ~  Percent_G + Diet_Treatment + Mass + (1|Family), data=tradeoff_data_immune)
+Concentration_mod<-lmer(Concentration_log ~  Percent_G + Diet_Treatment + Percent_G*Diet_Treatment + (1|Family), data=tradeoff_data_immune)
 summary(Concentration_mod)
 qqnorm(residuals(Concentration_mod)) 
 plot(Concentration_mod)
 
-Total_mod<-lm(Total_log ~ Photo_Treatment + Diet_Treatment + Photo_Treatment*Diet_Treatment, data=tradeoff_data_immune)
+Total_mod<-lmer(Total_log ~ Photo_Treatment + Diet_Treatment + Photo_Treatment*Diet_Treatment + (1|Family), data=tradeoff_data_immune)
 summary(Total_mod)
-qqnorm(residuals(Concentration_mod)) 
+qqnorm(residuals(Total_mod)) 
 plot(Total_mod)
 #results for total melanin production are qualitatively similar to those for melanin concentration 
 
 Concentration_low <- lmer(Concentration_log ~ Percent_G + (1|Family), data=lowdiet_immune)
 summary(Concentration_low)
-MuMIn::r.squaredGLMM(Concentration_low)
+qqnorm(residuals(Concentration_low))
+plot(Concentration_low)
 
 Concentration_high<-lmer(Concentration_log ~  Percent_G + (1|Family), data=highdiet_immune)
 summary(Concentration_high)
-MuMIn::r.squaredGLMM(Concentration_high)
+qqnorm(residuals(Concentration_high))
+plot(Concentration_high)
 
 
 #Figures
 
+conc_plot<-ggplot(tradeoff_data_immune, aes(x=Percent_G, y=Concentration_log)) + 
+  geom_point(aes(color=Diet_Treatment)) +
+  geom_smooth(method="lm", aes(linetype=Diet_Treatment, color=Diet_Treatment)) + 
+  scale_color_manual(values=diet_colors) + 
+  theme_classic(base_size = 15)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + 
+  xlab("Percent melanic area") + ylab("log Melanin concentration\n(ug melanin/g wire)")  + xlim(0,85)
+conc_plot
+
+
 #By treatment
-conc_plot<-ggplot(tradeoff_data_immune, aes(x=factor(Full_Treatment, level = treatment_order2), y=Concentration_log)) + 
+conc_plot_2<-ggplot(tradeoff_data_immune, aes(x=factor(Full_Treatment, level = treatment_order2), y=Concentration_log)) + 
   geom_boxplot(size=0.7, outlier.shape=NA) +
   geom_jitter(width=0.25, alpha=0.5) + 
   stat_summary(fun.y="mean", shape=18, size=1) + 
@@ -274,22 +289,12 @@ conc_plot<-ggplot(tradeoff_data_immune, aes(x=factor(Full_Treatment, level = tre
   theme_classic(base_size = 16)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + 
   xlab("Treatment") + ylab("log Melanin concentration\n(ug melanin/g wire)") + 
   scale_x_discrete(labels= my_labels2)
-conc_plot
-
-#Continuous 
-conc_plot2<-ggplot(tradeoff_data_immune, aes(x=Percent_G, y=Concentration_log)) + 
-  geom_point(aes(color=Diet_Treatment)) +
-  geom_smooth(method="lm", aes(linetype=Diet_Treatment, color=Diet_Treatment)) + 
-  scale_color_manual(values=diet_colors) + 
-  theme_classic(base_size = 15)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + 
-  xlab("Percent melanic area") + ylab("log Melanin concentration\n(ug melanin/g wire)")  + xlim(0,85)
-conc_plot2
 
 
 #### Part 2: Muscle Mass ####
+
 #Visualize  Data
 ggplot(aes(x=muscle_percent), data=tradeoff_data_adult) + geom_histogram()
-ggplot(aes(x=muscle_resids), data=tradeoff_data_adult) + geom_histogram()
 
 #Statistics- Residuals analysis
 residual_mod <- lm(log(muscle_mass)~log(full_mass), data=tradeoff_data_adult) 
@@ -298,14 +303,24 @@ resid <- residual_mod$residuals
 tradeoff_data_adult <- tradeoff_data_adult |>
   mutate(muscle_resids=residual_mod$residuals)
 
+ggplot(aes(x=muscle_resids), data=tradeoff_data_adult) + geom_histogram()
+
 muscle_resid_mod <- lmer(muscle_resids ~ Percent_G + Diet_Treatment + Percent_G*Diet_Treatment + (1|Family), data=tradeoff_data_adult)
 summary(muscle_resid_mod)
 qqnorm(residuals(muscle_resid_mod)) 
 plot(muscle_resid_mod)
 
 #Figures
+resid_plot<-ggplot(tradeoff_data_adult, aes(x=Percent_G, y=muscle_resids)) + 
+  geom_point(aes(color=Diet_Treatment)) +
+  geom_smooth(method="lm", aes(color=Diet_Treatment), linetype="dashed", show.legend = F) + 
+  scale_color_manual(values=diet_colors) + 
+  theme_classic(base_size = 15)+ theme(text=element_text(family="Times New Roman")) + 
+  xlab("Percent melanic area") + ylab("Muscle mass residuals") +  xlim(0,85) + labs(color="Diet Treatment")
+resid_plot
+
 #By treatment
-resid_plot<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, level = treatment_order2), y=muscle_resids)) + 
+resid_plot_2<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, level = treatment_order2), y=muscle_resids)) + 
   geom_boxplot(size=0.7, outlier.shape=NA) +
   geom_jitter(width=0.25, alpha=0.5) + 
   stat_summary(fun.y="mean", shape=18, size=1) + 
@@ -313,23 +328,13 @@ resid_plot<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, level = tre
   theme_classic(base_size = 16)+ theme(legend.position="none",text=element_text(family="Times New Roman")) + 
   xlab("Treatment") + ylab("Muscle mass residuals") +
   scale_x_discrete(labels= my_labels2) 
-resid_plot
+resid_plot_2
 
-#Continuous
-resid_plot2<-ggplot(tradeoff_data_adult, aes(x=Percent_G, y=muscle_resids)) + 
-  geom_point(aes(color=Diet_Treatment)) +
-  geom_smooth(method="lm", aes(color=Diet_Treatment), linetype="dashed", show.legend = F) + 
-  scale_color_manual(values=diet_colors) + 
-  theme_classic(base_size = 15)+ theme(text=element_text(family="Times New Roman")) + 
-  xlab("Percent melanic area") + ylab("Muscle mass residuals") +  xlim(0,85) + labs(color="Diet Treatment")
-resid_plot2
-
-#raw muscle mass
+#raw muscle mass by treatment
 muscle_plot<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, level = treatment_order), y=muscle_percent)) + 
-  geom_boxplot(aes(color=Full_Treatment), size=0.7, outlier.shape=NA) +
-  geom_jitter(aes(color=Full_Treatment), width=0.25, alpha=0.5) + 
-  stat_summary(fun.y="mean", color=treatment_colors, shape=18, size=1) + 
-  scale_color_manual(values=treatment_colors2) + 
+  geom_boxplot(size=0.7, outlier.shape=NA) +
+  geom_jitter(width=0.25, alpha=0.5) + 
+  stat_summary(fun.y="mean", shape=18, size=1) + 
   theme_classic(base_size = 16)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + 
   xlab("Treatment") + ylab("Muscle (g)") + 
   scale_x_discrete(labels= my_labels)
@@ -357,11 +362,13 @@ plot(hindwing_dark_mod)
 
 hindwing_dark_low <- lmer(hind_darkness~Percent_G + (1|Family), data=lowdiet_adult)
 summary(hindwing_dark_low)
-MuMIn::r.squaredGLMM(hindwing_dark_low)
+qqnorm(residuals(hindwing_dark_low))
+plot(hindwing_dark_low)
 
 hindwing_dark_high <- lmer(hind_darkness~Percent_G + (1|Family), data=highdiet_adult)
 summary(hindwing_dark_high)
-MuMIn::r.squaredGLMM(hindwing_dark_high)
+qqnorm(residuals(hindwing_dark_high))
+plot(hindwing_dark_high)
 
 hindwing_area_mod <- lmer(hind_percent~ Percent_G + Diet_Treatment + Percent_G*Diet_Treatment +(1|Family), data=tradeoff_data_adult)
 summary(hindwing_area_mod)
@@ -371,8 +378,32 @@ plot(hindwing_area_mod)
 
 #Figures
 
+forewing_plot<-ggplot(tradeoff_data_adult, aes(x=Percent_G, y=fore_darkness)) + 
+  geom_point(aes(color=Diet_Treatment)) +
+  geom_smooth(method="lm", linetype="dashed", aes(color=Diet_Treatment)) + 
+  scale_color_manual(values=diet_colors) + 
+  theme_classic(base_size = 15)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + 
+  xlab("Percent melanic area") + ylab("Forewing darkness") + xlim(0,85)
+forewing_plot
+
+hindwing_dark_plot<-ggplot(tradeoff_data_adult, aes(x=Percent_G, y=hind_darkness)) + 
+  geom_point(aes(color=Diet_Treatment)) +
+  geom_smooth(method="lm", aes(linetype=Diet_Treatment, color=Diet_Treatment)) + 
+  scale_color_manual(values=diet_colors) + 
+  theme_classic(base_size = 15)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + 
+  xlab("Percent melanic area") + ylab("Hindwing darkness")  + xlim(0,85)
+hindwing_dark_plot
+
+hindwing_area_plot<-ggplot(tradeoff_data_adult, aes(x=Percent_G, y=hind_percent)) + 
+  geom_point(aes(color=Diet_Treatment)) +
+  geom_smooth(method="lm", linetype="dashed", aes(color=Diet_Treatment)) + 
+  scale_color_manual(values=diet_colors) + 
+  theme_classic(base_size = 15)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + 
+  xlab("Percent melanic area") + ylab("Hindwing percent\nmelanic area")  + xlim(0,85)
+hindwing_area_plot
+
 #By treatment
-forewing_plot<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, level = treatment_order2), y=fore_darkness)) + 
+forewing_plot_2<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, level = treatment_order2), y=fore_darkness)) + 
   geom_boxplot(size=0.7, outlier.shape=NA) +
   geom_jitter(width=0.25, alpha=0.5) +
   stat_summary(fun.y="mean", shape=18, size=1) + 
@@ -380,9 +411,8 @@ forewing_plot<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, level = 
   theme_classic(base_size = 16)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + 
   xlab("Treatment") + ylab("Forewing darkness") + 
   scale_x_discrete(labels= my_labels2)
-forewing_plot
 
-hindwing_dark_plot<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, level = treatment_order2), y=hind_darkness)) + 
+hindwing_dark_plot_2<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, level = treatment_order2), y=hind_darkness)) + 
   geom_boxplot(size=0.7, outlier.shape=NA) +
   geom_jitter(width=0.25, alpha=0.5) +
   stat_summary(fun.y="mean", shape=18, size=1) + 
@@ -390,9 +420,8 @@ hindwing_dark_plot<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, lev
   theme_classic(base_size = 16)+ theme(legend.position="none", text=element_text(family="Times New Roman")) +
   xlab("Treatment") + ylab("Hindwing darkness") + 
   scale_x_discrete(labels= my_labels2)
-hindwing_dark_plot
 
-hindwing_area_plot<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, level = treatment_order2), y=hind_percent)) + 
+hindwing_area_plot_2<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, level = treatment_order2), y=hind_percent)) + 
   geom_boxplot(size=0.7, outlier.shape=NA) +
   geom_jitter(width=0.25, alpha=0.5) +
   stat_summary(fun.y="mean", shape=18, size=1) + 
@@ -400,59 +429,26 @@ hindwing_area_plot<-ggplot(tradeoff_data_adult, aes(x=factor(Full_Treatment, lev
   theme_classic(base_size = 16)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + 
   xlab("Treatment") + ylab("Hindwing proportion\nmelanic area (%)") + 
   scale_x_discrete(labels= my_labels2)
-hindwing_area_plot
 
-#Continuous 
-forewing_plot2<-ggplot(tradeoff_data_adult, aes(x=Percent_G, y=fore_darkness)) + 
-  geom_point(aes(color=Diet_Treatment)) +
-  geom_smooth(method="lm", linetype="dashed", aes(color=Diet_Treatment)) + 
-  scale_color_manual(values=diet_colors) + 
-  theme_classic(base_size = 15)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + 
-  xlab("Percent melanic area") + ylab("Forewing darkness") + xlim(0,85)
-forewing_plot2
-
-hindwing_dark_plot2<-ggplot(tradeoff_data_adult, aes(x=Percent_G, y=hind_darkness)) + 
-  geom_point(aes(color=Diet_Treatment)) +
-  geom_smooth(method="lm", aes(linetype=Diet_Treatment, color=Diet_Treatment)) + 
-  scale_color_manual(values=diet_colors) + 
-  theme_classic(base_size = 15)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + 
-  xlab("Percent melanic area") + ylab("Hindwing darkness")  + xlim(0,85)
-hindwing_dark_plot2
-
-hindwing_area_plot2<-ggplot(tradeoff_data_adult, aes(x=Percent_G, y=hind_percent)) + 
-  geom_point(aes(color=Diet_Treatment)) +
-  geom_smooth(method="lm", linetype="dashed", aes(color=Diet_Treatment)) + 
-  scale_color_manual(values=diet_colors) + 
-  theme_classic(base_size = 15)+ theme(legend.position="none", text=element_text(family="Times New Roman")) + 
-  xlab("Percent melanic area") + ylab("Hindwing percent\nmelanic area")  + xlim(0,85)
-hindwing_area_plot2
 
 #Figure 5
 figure_5<-ggdraw() +
-  draw_plot(conc_plot2, x = 0.08, y = .5, width=0.35, height=0.46) +
-  draw_plot(resid_plot2, x = 0.45, y = .5, width=0.50, height=0.46) +
-  draw_plot(forewing_plot2, x = 0, y = 0, width=0.33, height=0.46) +
-  draw_plot(hindwing_area_plot2, x = 0.33, y = 0,width=0.33, height=0.46) +
-  draw_plot(hindwing_dark_plot2,  x = 0.66, y = 0, width=0.33, height=0.46) +
+  draw_plot(conc_plot, x = 0.08, y = .5, width=0.35, height=0.46) +
+  draw_plot(resid_plot, x = 0.45, y = .5, width=0.50, height=0.46) +
+  draw_plot(forewing_plot, x = 0, y = 0, width=0.33, height=0.46) +
+  draw_plot(hindwing_area_plot, x = 0.33, y = 0,width=0.33, height=0.46) +
+  draw_plot(hindwing_dark_plot,  x = 0.66, y = 0, width=0.33, height=0.46) +
   draw_plot_label(label = c("A", "B", "C", "D", "E"), size = 15, family="Times New Roman",
                   x = c(0.06, 0.45, 0, 0.33, 0.66), y = c(1, 1, 0.49, 0.49, 0.49))
 figure_5
 
-#Figure S3           
-figure_s3<-ggdraw() +
-  draw_plot(conc_plot, x = 0.13, y = .5, width=0.34, height=0.46) +
-  draw_plot(resid_plot, x = 0.55, y = .5, width=0.34, height=0.46) +
-  draw_plot(forewing_plot, x = 0, y = 0, width=0.33, height=0.46) +
-  draw_plot(hindwing_area_plot, x = 0.33, y = 0,width=0.33, height=0.46) +
-  draw_plot(hindwing_dark_plot, x = 0.66, y = 0, width=0.33, height=0.46) +
+#By treatment           
+by_treatment<-ggdraw() +
+  draw_plot(conc_plot_2, x = 0.13, y = .5, width=0.34, height=0.46) +
+  draw_plot(resid_plot_2, x = 0.55, y = .5, width=0.34, height=0.46) +
+  draw_plot(forewing_plot_2, x = 0, y = 0, width=0.33, height=0.46) +
+  draw_plot(hindwing_area_plot_2, x = 0.33, y = 0,width=0.33, height=0.46) +
+  draw_plot(hindwing_dark_plot_2, x = 0.66, y = 0, width=0.33, height=0.46) +
   draw_plot_label(label = c("A", "B", "C", "D", "E"), size = 15, family="Times New Roman",
                   x = c(0.1, 0.55, 0, 0.31, 0.66), y = c(1, 1, 0.49, 0.49, 0.49))
-figure_s3
-          
-#Figure S2
-ggplot(tradeoff_data_immune, aes(x=Avg_Percent_Melanin, y=Concentration_log)) + 
-  geom_point(aes(color=Full_Treatment)) +
-  geom_smooth(aes(color=Full_Treatment), method=lm, se=TRUE, fill="gray80") + 
-  scale_color_manual(values=treatment_colors2) +
-  theme_classic(base_size = 16)+ theme(text=element_text(family="Times New Roman")) + #text font and size, remove legend
-  xlab("Melanin") + ylab("Forewing darkness") 
+

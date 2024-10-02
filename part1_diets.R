@@ -1,5 +1,6 @@
-# Experiment 1: Diet as a constraint on melanin pigmentation in Hyles lineata
-#Authors: Sarah Britton and Goggy Davidowitz
+#Dietary constraints and costs of melanin pigmentation plasticity
+#Experiment 1: Diet treatments
+#Sarah Britton and Goggy Davidowitz
 
 # Libraries
 library(ggplot2) #for making plots
@@ -8,15 +9,18 @@ library(multcomp) #for Tukey tests
 library(extrafont) #for plot fonts
 library(ggpubr) #for combining ggplots
 library(emmeans) #for post hoc tests
-library(lmerTest) # for extracting p vals from mixed models
+library(lmerTest) # for extracting p-values from mixed models
 library(lme4) # mixed models
-library(cowplot) #for combining plots
 library(dplyr) #for piping and grouping
 
 
 #Read in data, convert variables and combine data sets as needed
 diet_data <- read.csv(file="data/diet_data.csv")
 diet_data$diet_treatment <- as.factor(diet_data$diet_treatment) 
+
+feeding_data <- read.csv(file="data/Feeding_Data.csv")
+feeding_data$diet_treatment <- as.factor(feeding_data$diet_treatment) 
+feeding_data$ID<- as.character(feeding_data$ID) 
 
 extraction_data<-read.csv(file="data/Extraction_data.csv")
 extraction_data$diet_treatment <- as.factor(extraction_data$diet_treatment) 
@@ -25,31 +29,30 @@ extraction_data_full<- merge(extraction_data, diet_data, by=c("ID", "diet_treatm
 
 extraction_data_full<-extraction_data_full |>
   mutate(extraction_run=as.factor(extraction_run)) |>
-  mutate(concentration_photo_mass = total_extracted/photo_mass) |>
-  mutate(log_concentration = log10(concentration_photo_mass )) 
+  mutate(concentration = total_extracted/photo_mass) |>
+  mutate(log_concentration = log10(concentration))
 
-feeding_data <- read.csv(file="data/Feeding_Data.csv")
-feeding_data$diet_treatment <- as.factor(feeding_data$diet_treatment) 
 
-  
 #Check distribution of  response variables
 hist(diet_data$melanin_percent)
 hist(diet_data$darkness)
-hist(extraction_data_full$concentration_photo_mass)
-hist(extraction_data_full$log_concentration)
+hist(diet_data$photo_mass)
+hist(feeding_data$fourth_food_change)
+hist(feeding_data$fifth_food_change)
+hist(extraction_data_full$concentration)
 
 
-#These lists will be used for making plots for ImageJ data (color for presentations)
-diet_colors = c("orange", "orange3", "green2", "green4", "yellow") 
+#These lists will be used for making plots 
 diet_order = c('LOW', 'MEDIUM', 'HIGH', 'LOW-2', 'HIGH-2') 
 diet_labels=c('Low-P/\nLow-T', 'Low-P/\nMed-T', 'Low-P/\nHigh-T', 'High-P/\nLow-T', 'High-P/\nHigh-T')
 
-#These lists will be used for making plots for extraction data for presentations (color for presentations)
+#for extraction data specifically
 diet_order_extract = c('LOW','HIGH') 
 diet_labels_extract=c('Low-P/\nLow-T','Low-P/\nHigh-T')
-diet_colors_extract = c("orange", "green2")
+
 
 ####Statistics####
+
 #Create table of descriptive stats (mean and sd) for treatment groups
 diet_data %>%
   group_by(diet_treatment) %>%
@@ -69,13 +72,14 @@ feeding_data %>%
             fifth_sd = sd(fifth_food_change, na.rm = TRUE))
   as.data.frame
   
-
+  
 #Percent melanin
 percent_mod <- lm(melanin_percent ~ diet_treatment, data=diet_data)
 summary(percent_mod)
 emmeans(percent_mod, specs="diet_treatment") |> pairs(adjust="tukey")
-qqnorm(residuals(percent_mod)) 
-plot(fitted(percent_mod), residuals(percent_mod)) 
+qqnorm(residuals(percent_mod)) #normality of residuals
+plot(fitted(percent_mod), residuals(percent_mod)) #homoscedasticity 
+
 
 #Darkness
 darkness_mod <- lm(darkness ~ diet_treatment, data=diet_data)
@@ -83,6 +87,7 @@ summary(darkness_mod)
 emmeans(darkness_mod, specs="diet_treatment") |> pairs(adjust="tukey")
 qqnorm(residuals(darkness_mod))
 plot(fitted(darkness_mod), residuals(darkness_mod)) 
+
 
 #Size
 size_mod<-lm(photo_mass ~ diet_treatment, data = diet_data)
@@ -93,9 +98,14 @@ plot(fitted(size_mod),residuals(size_mod))
 
 size_regress<-lm(melanin_percent ~ photo_mass, data = diet_data)
 summary(size_regress)
+qqnorm(residuals(size_regress)) 
+plot(fitted(size_regress),residuals(size_regress))
 
 size_regress2<-lm(darkness ~ photo_mass, data = diet_data)
 summary(size_regress2)
+qqnorm(residuals(size_regress2)) 
+plot(fitted(size_regress2),residuals(size_regress2))
+
 
 #Feeding data
 feeding_test_4<-lm(fourth_food_change ~ diet_treatment, data = feeding_data)
@@ -110,16 +120,23 @@ emmeans(feeding_test_5, specs="diet_treatment") |> pairs(adjust="tukey")
 qqnorm(residuals(feeding_test_5))
 plot(fitted(feeding_test_5),residuals(feeding_test_5)) 
 
+
 #Extraction data
-t.test(extraction_data_full$concentration_photo_mass~extraction_data_full$diet_treatment)
+t.test(extraction_data_full$concentration~extraction_data_full$diet_treatment)
 
-t.test(extraction_data_full$log_concentration~extraction_data_full$diet_treatment)
-
-extraction_test <- lm(concentration_photo_mass ~ darkness, data=extraction_data_full)
+extraction_test <- lm(concentration ~ melanin_percent, data=extraction_data_full)
 summary(extraction_test)
+qqnorm(residuals(extraction_test))
+plot(fitted(extraction_test),residuals(extraction_test)) 
+
+extraction_test_2 <- lm(concentration ~ darkness, data=extraction_data_full)
+summary(extraction_test_2)
+qqnorm(residuals(extraction_test_2))
+plot(fitted(extraction_test_2),residuals(extraction_test_2)) 
 
 
 ####Figures for Paper####
+
 #Figure 2
 area_graph_paper<-ggplot(diet_data, aes(x=factor(diet_treatment, level = diet_order),  melanin_percent)) + 
   geom_boxplot(outlier.shape=NA) +
@@ -141,7 +158,7 @@ darkness_graph_paper<-ggplot(diet_data, aes(x=factor(diet_treatment, level = die
   xlab("Diet Treatment") + ylab("Darkness")
 darkness_graph_paper
 
-extraction_paper <- ggplot(extraction_data_full, aes(x=factor(diet_treatment, level=diet_order_extract), concentration_photo_mass)) +
+extraction_paper <- ggplot(extraction_data_full, aes(x=factor(diet_treatment, level=diet_order_extract), concentration)) +
   geom_boxplot (outlier.shape = NA) +
   geom_jitter(width=0.15, alpha=0.5) +
   stat_summary(fun="mean",shape=18, size=1.2) +
@@ -155,6 +172,7 @@ ggarrange(area_graph_paper, darkness_graph_paper, extraction_paper,
           font.label = list(size=14, family="Times New Roman"),labels=c("A", "B", "C"),
           nrow=1,
           hjust=-8, align="hv")
+
 
 #Figure 3
 size_graph_paper<-ggplot(diet_data, aes(x=factor(diet_treatment, level = diet_order),  photo_mass)) +
@@ -193,6 +211,7 @@ ggarrange(size_graph_paper, feeding_4th_paper, feeding_5th_paper,
           nrow=1,
           hjust=-7.5, align="hv")
 
+
 #Figure S1
 size_regress<-ggplot(diet_data, aes(photo_mass, melanin_percent))+ geom_point(alpha=0.7)+ 
   geom_smooth(method=lm, color="Black") + 
@@ -215,7 +234,23 @@ ggarrange(size_regress, size_regress_2,
           nrow=1,
           hjust=-7.5, align="hv")
 
+melanin_regress<-ggplot(extraction_data_full, aes(concentration, melanin_percent))+ geom_point(alpha=0.7)+ 
+  geom_smooth(method=lm, color="Black") + 
+  theme_classic(base_size = 16) + theme(legend.position="none",text=element_text(family="Times New Roman")) +
+  xlab("Concentration") + ylab("Percent melanic area")
+melanin_regress
+
+melanin_regress_2<-ggplot(extraction_data_full, aes(concentration, darkness))+ geom_point(alpha=0.7)+ 
+  geom_smooth(method=lm, color="Black") + 
+  theme_classic(base_size = 16) + theme(legend.position="none",text=element_text(family="Times New Roman")) +
+  xlab("Concentration") + ylab("Melanin darkness")
+melanin_regress_2
+
+
 ####Figures for presentations####
+
+diet_colors = c("orange", "orange3", "green2", "green4", "yellow") 
+diet_colors_extract = c("orange", "green2")
 
 #Melanin Percent
 area_graph_slides<-ggplot(diet_data, aes(x=factor(diet_treatment, level = diet_order),  avg_percent)) + 
