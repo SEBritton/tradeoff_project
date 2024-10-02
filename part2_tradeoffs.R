@@ -3,22 +3,17 @@
 #Sarah Britton and Goggy Davidowitz
 
 # Libraries
-library(cowplot)
-library(gridExtra)
 library(ggplot2) #for making plots
 library(extrafont) #for plot fonts
 library(ggpubr) #for combining ggplots
-library(tidyr) 
+library(cowplot) #for combining plots with ggdraw
 library(emmeans) #for post hoc tests
 library(lmerTest) # for extracting p vals from mixed models
 library(lme4) # mixed models
-library(multcompView)
-library(car)
-library(knitr)
-library(patchwork)
+library(multcompView) #for showing significance in results
+library(car) #for Anova function
 library(lmerTest) # for extracting p vals from mixed models
-library(dplyr) 
-library(MuMIn) #for model averaging 
+library(dplyr) #for piping/ grouping
 
 
 #Read in data and convert variables as needed
